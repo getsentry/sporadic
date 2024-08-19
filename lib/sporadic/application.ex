@@ -8,6 +8,7 @@ defmodule Sporadic.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      Sporadic.Firehose,
       SporadicWeb.Telemetry,
       # Sporadic.Repo,
       {DNSCluster, query: Application.get_env(:sporadic, :dns_cluster_query) || :ignore},
