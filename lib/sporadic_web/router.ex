@@ -18,6 +18,7 @@ defmodule SporadicWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    live "/firehose", FirehoseLive
   end
 
   # Other scopes may use custom stacks.

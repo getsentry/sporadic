@@ -9,15 +9,13 @@ defmodule Sporadic.Firehose do
 
   @impl true
   def init(state) do
-    # Schedule work to be performed on start
     schedule_work()
-
     {:ok, state}
   end
 
   @impl true
   def handle_info(:work, state) do
-    generate_data() |> IO.inspect()
+    generate_data()
     schedule_work()
     {:noreply, state}
   end
@@ -27,11 +25,13 @@ defmodule Sporadic.Firehose do
   end
 
   defp generate_data do
-    [
+    entry = [
       (:rand.uniform() * 180 - 90) |> Float.round(3),
       (:rand.uniform() * 360 - 180) |> Float.round(3),
       :os.system_time(:millisecond),
       Enum.random(@platforms)
     ]
+
+    SporadicWeb.FirehoseLive.add_entry(entry)
   end
 end
