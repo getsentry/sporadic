@@ -2,6 +2,8 @@ defmodule SporadicWeb.FirehoseLive do
   use SporadicWeb, :live_view
   alias Phoenix.PubSub
 
+  @entries_limit 20
+
   def mount(_params, _session, socket) do
     if connected?(socket), do: PubSub.subscribe(Sporadic.PubSub, "firehose")
     {:ok, socket |> stream_configure(:buffer, dom_id: &"#{&1[:time]}") |> stream(:buffer, [])}
@@ -24,6 +26,6 @@ defmodule SporadicWeb.FirehoseLive do
   end
 
   def handle_info({:feed, entry}, socket) do
-    {:noreply, socket |> stream_insert(:buffer, entry, limit: -10)}
+    {:noreply, socket |> stream_insert(:buffer, entry, limit: -@entries_limit)}
   end
 end

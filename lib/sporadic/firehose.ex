@@ -2,6 +2,7 @@ defmodule Sporadic.Firehose do
   use GenServer
   alias Phoenix.PubSub
 
+  @frequency_ms 10
   @platforms [:ruby, :python, :javascript]
 
   def start_link(_) do
@@ -22,7 +23,7 @@ defmodule Sporadic.Firehose do
   end
 
   defp schedule_work do
-    Process.send_after(self(), :work, :rand.uniform(1000))
+    Process.send_after(self(), :work, :rand.uniform(@frequency_ms))
   end
 
   defp generate_data do
