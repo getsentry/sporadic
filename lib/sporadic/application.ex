@@ -8,7 +8,6 @@ defmodule Sporadic.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      Sporadic.Firehose,
       SporadicWeb.Telemetry,
       # Sporadic.Repo,
       {DNSCluster, query: Application.get_env(:sporadic, :dns_cluster_query) || :ignore},
@@ -18,7 +17,8 @@ defmodule Sporadic.Application do
       # Start a worker by calling: Sporadic.Worker.start_link(arg)
       # {Sporadic.Worker, arg},
       # Start to serve requests, typically the last entry
-      SporadicWeb.Endpoint
+      SporadicWeb.Endpoint,
+      Sporadic.Firehose
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
