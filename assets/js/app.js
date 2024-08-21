@@ -22,10 +22,34 @@ import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 
+import * as d3 from "d3";
+
+const GEOJSON = 'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_land.geojson'
+
+let Hooks = {
+    DrawMap: {
+        mounted() {
+            let projection = d3.geoNaturalEarth1();
+            let geoGenerator = d3.geoPath().projection(projection)
+            let svg = d3.select('#map_container').append('svg').attr('class', 'w-full h-full')
+            let g = svg.append('g').attr('id', 'map')
+
+            d3.json(GEOJSON).then((json) => {
+                g.selectAll('path')
+                    .data(json.features)
+                    .join('path')
+                    .attr('d', geoGenerator)
+                    .attr('class', 'fill-violet-200 stroke-neutral-400')
+            })
+        }
+    }
+}
+
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {
-  longPollFallbackMs: 2500,
-  params: {_csrf_token: csrfToken}
+    longPollFallbackMs: 2500,
+    params: {_csrf_token: csrfToken},
+    hooks: Hooks
 })
 
 // Show progress bar on live navigation and form submits
@@ -35,10 +59,9 @@ window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
 
 // connect if there are any LiveViews on the page
 liveSocket.connect()
+liveSocket.disableDebug()
 
 // expose liveSocket on window for web console debug logs and latency simulation:
-// >> liveSocket.enableDebug()
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
-

@@ -12,17 +12,20 @@ defmodule SporadicWeb.FirehoseLive do
   def render(assigns) do
     ~H"""
     <p>Boo</p>
-    <table>
-      <tbody id="firehose" phx-update="stream">
-        <tr :for={{dom_id, entry} <- @streams.buffer} id={dom_id}>
-          <td><%= entry[:latitude] %></td>
-          <td><%= entry[:longitude] %></td>
-          <td><%= entry[:time] %></td>
-          <td><%= entry[:platform] %></td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="h-screen w-screen" id="map_container" phx-hook="DrawMap"></div>
     """
+
+    # <table>
+    #   <tbody id="firehose" phx-update="stream">
+    #     <tr :for={{dom_id, entry} <- @streams.buffer} id={dom_id}>
+    #       <td><%= entry[:latitude] %></td>
+    #       <td><%= entry[:longitude] %></td>
+    #       <td><%= entry[:time] %></td>
+    #       <td><%= entry[:platform] %></td>
+    #     </tr>
+    #   </tbody>
+    # </table>
+    # """
   end
 
   def handle_info({:feed, entry}, socket) do
