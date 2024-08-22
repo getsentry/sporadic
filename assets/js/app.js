@@ -25,8 +25,7 @@ import topbar from '../vendor/topbar'
 import * as d3 from 'd3';
 
 const GEOJSON = 'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_land.geojson'
-const MAPPING = { 'ruby': 'red', 'python': 'blue', 'javascript': 'yellow' }
-const BUFFER_MAX = 1000
+const MAPPING = { 'ruby': '#820c02', 'python': '#3776ab', 'javascript': '#f7df1e' }
 
 let Hooks = {
     DrawMap: {
@@ -46,19 +45,23 @@ let Hooks = {
             })
 
             this.handleEvent('feed', entry => {
-                if (blips_group.selectChildren().size() > BUFFER_MAX) {
-                    blips_group.selectChild().remove()
-                }
-
                 let { latitude, longitude, time, platform } = entry
                 let [ long, lat ] = projection([longitude, latitude])
 
-                blips_group.append('circle')
+                let child = blips_group.append('circle')
                     .attr('id', time)
                     .attr('cx', long)
                     .attr('cy', lat)
+                    .transition()
+                    .duration(500)
                     .attr('r', 3)
                     .style('fill', MAPPING[platform])
+                    .style('fill-opacity', '70%')
+                    .selection()
+
+                setTimeout(() => {
+                    child.transition().duration(500).style('opacity', 0).remove()
+                }, 1000)
             })
         }
     }
